@@ -1,0 +1,266 @@
+<DOCTYPE HTML>
+<head>
+    <script
+  src="jquery-3.2.1.min.js"></script>
+    <style>
+        #background {
+            width: 100vw;
+            height: 100vh;
+            top: 0; right: 0; bottom: 0; left: 0;
+            overflow: hidden;
+            position: absolute;
+        }
+        #rocket {
+            width: 10vw;
+            bottom: 1vh; left: 50vw;
+            position: absolute;
+            z-index: 2;
+        }
+        .met, .ex{
+            position: absolute;
+            width: 10vw;
+        }
+        .ex{
+            z-index: 3;
+        }
+        .laz{
+            position: absolute;
+            background-color: red;
+            height: 4vh;
+            width: 1vh;
+        }
+        .lives{
+            position: absolute;
+            top:0%;
+            left: 0%;
+            width: 5vw;
+            opacity: 1;
+            z-index: 2;
+        }
+        #dummy{
+            opacity: .5;
+            display: none;
+        }
+        #scores{
+            position: absolute;
+            background-color: red;
+            top: 0px; right: 0%;
+            font-size: 5vw;
+            z-index: 2;
+        }
+        .button{
+            position: absolute;
+            z-index: 5;
+            width: 25vw;
+            height: 100vh;
+            bottom: 0px;
+        }
+        #mLeft{
+            left: 0px;
+        }
+        #mRight{
+            right: 0px;
+        }
+        #shootLaz{
+            left: 37.5vw;
+        }
+        audio, #shootCheck{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function sleep(ms) {
+             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        function collideCheck(spawn){
+            if ($("#rocket").position().top < $(spawn).position().top+$(spawn).height() && $("#rocket").position().left + $("#rocket").width() > $(spawn).position().left && $("#rocket").position().left < $(spawn).position().left + $(spawn).width()){
+                return true;
+            }
+        }
+        function killCheck(spawn) {
+            var result = false;
+            $(".laz").each(function(i){
+                var lazId = "#"+this.id;
+                if ($(lazId).position().top < $(spawn).position().top+$(spawn).height() && $(lazId).position().left + $(lazId).width() > $(spawn).position().left && $(lazId).position().left < $(spawn).position().left + $(spawn).width()){
+                    result = true;
+                    $(lazId).remove();
+                }
+            });
+            return result;
+        }
+        async function spawn(pos, spwn){
+            var move = $(window).width()/10;
+            var met =document.createElement("img");
+            met.src = "meteor.png";
+            met.classList.add("met");
+            met.id="s"+spwn
+            var spwnId = "#s" + spwn;
+            document.getElementsByTagName("BODY")[0].appendChild(met);
+            $(spwnId).css("left", pos*move);
+            for (var p = $(window).height(); p > 0; p=p-1){
+                $(spwnId).css("top", $(spwnId).position().top + 3);
+                if($(spwnId).position().top >= $(window).height()-$(spwnId).height()){
+                    var rkt = ["#r1","#r2","#r3","#dummy"];
+                    if ($(rkt[0]).css("opacity") == .5){
+                            window.location.replace("lost.html");
+                        }
+                    for (var i = 0; i < 3; i++){                        
+                        if( $(rkt[i+1]).css("opacity") == .5){
+                            $(rkt[i]).css("opacity", .5);
+                        }
+                    }
+                    break;
+                } else if (killCheck(spwnId)) {
+                    $("#score").html(parseInt($("#score").html())+1);
+                    var sto = window.localStorage;
+                    var high = sto.getItem("high");
+                    if (high < parseInt($("#score").html())){
+                        sto.setItem("high", parseInt($("#score").html()));
+                        $("#high").html("Highest: " + sto.getItem("high"));
+                    }
+                    break;
+                }else if (collideCheck(spwnId)){
+                    var rkt = ["#r1","#r2","#r3","#dummy"];
+                    if ($(rkt[0]).css("opacity") == .5){
+                            window.location.replace("lost.html");
+                        }
+                    for (var i = 0; i < 3; i++){                        
+                        if( $(rkt[i+1]).css("opacity") == .5){
+                            $(rkt[i]).css("opacity", .5);
+                        }
+                    }
+                    break;
+                }
+                await sleep(25);
+            }
+            document.getElementById("exploSE").play();
+            var ex = document.createElement("img");
+            ex.id = "e" + spwn;
+            ex.classList.add("ex");
+            ex.src = "explo.png";
+            document.getElementsByTagName("BODY")[0].appendChild(ex);
+            $("#e" + spwn).css({"left": $(spwnId).position().left, "top": $(spwnId).position().top});
+            $(spwnId).remove();
+            await sleep(10);
+            $("#e" + spwn).remove();
+        }
+        async function shoot(lid){
+            if ($("#shootCheck").html() != "t"){
+                shotControl();
+                document.getElementById("lazerSE").play();
+                var laz = document.createElement("div");
+                laz.classList.add("laz");
+                laz.id = "l" + lid;
+                var lazId = "#l" + lid;
+                document.getElementsByTagName("BODY")[0].appendChild(laz);
+                $(lazId).css('left', $("#rocket").position().left + $("#rocket").width()/2-$(lazId).width()/2);
+                $(lazId).css('top', $('#rocket').position().top);
+                while (true) {
+                    try {
+                        $(lazId).css("top", $(lazId).position().top - 2);
+                        if ($(lazId).position().top <= 0) {
+                            break;
+                        }
+                    }
+                    catch (err){
+                        if(err!="TypeError: Cannot read property 'top' of undefined"){
+                            alert(err);
+                        }
+                        break;
+                    }
+                    await sleep(1);
+                }
+                $(lazId).remove();
+            }
+        }
+        async function shotControl(){
+            $("#shootCheck").html("t");
+            await sleep(1500);
+            $("#shootCheck").html("f");
+        }
+        async function autoSpawn(sid) {
+            var scr = parseInt($("#score").html());
+            var time = Math.floor((Math.random() * 5000) + 1000 - 10 * scr);
+            if (time<0){
+                time=0;
+            }
+            spawn(Math.floor((Math.random() * 10)), sid);
+            sid = sid + 1;
+            await sleep(time);
+            autoSpawn(sid);
+        }
+        $(document).ready(function () {
+            var sto = window.localStorage;
+            if (sto.getItem("high") == null){
+                sto.setItem("high", 0);
+            }
+            $("#high").html("Highest: " + sto.getItem("high"));
+            var move = $(window).width()/10;
+            var end = $(window).width() - $("#rocket").width();
+            var spwn = 0;
+            var sid = 0;
+            var lid = 0;
+            $("#r2").css("left", $("#r1").position().left + $("#r1").width());
+            $("#r3").css("left", $("#r2").position().left + $("#r2").width());
+            $(document).keydown(function(e){
+                switch(e.which){
+                    case 37:
+                        $("#rocket").css("left", $("#rocket").position().left - move + "px");
+                        break; 
+                    case 39:
+                        $("#rocket").css("left", $("#rocket").position().left + move + "px");
+                        break;
+                    case 32:
+                        shoot(lid);
+                        lid = lid + 1;
+                        break;
+                    case 83:
+                        spawn(Math.floor((Math.random() * 10)), sid);
+                        sid = sid + 1;
+                        break;
+                }
+                if ($("#rocket").position().left>end){
+                    $("#rocket").css("left", end + "px");
+                }else if($("#rocket").position().left<0){
+                    $("#rocket").css("left", 0 + "px");
+                }
+            });
+            $("#mLeft").click(function () {
+                $("#rocket").css("left", $("#rocket").position().left - move + "px");
+                if ($("#rocket").position().left>end){
+                    $("#rocket").css("left", end + "px");
+                }else if($("#rocket").position().left<0){
+                    $("#rocket").css("left", 0 + "px");
+                }
+            });
+            $("#mRight").click(function () {
+                $("#rocket").css("left", $("#rocket").position().left + move + "px");
+                if ($("#rocket").position().left>end){
+                    $("#rocket").css("left", end + "px");
+                }else if($("#rocket").position().left<0){
+                    $("#rocket").css("left", 0 + "px");
+                }
+            });
+            $("#shootLaz").click(function () {
+                shoot(lid);
+                lid = lid + 1;
+            });
+            autoSpawn(sid);
+        });
+    </script>
+    <img src="milky-way.jpg" id="background" />
+    <img src="rocketwotter.png" id="rocket" />
+    <img src="rocket.png" id="r1" class="lives"/>
+    <img src="rocket.png" id="r2" class="lives"/>
+    <img src="rocket.png" id="r3" class="lives"/>
+    <div id="scores"><div id="score">0</div><div id="high"></div></div>
+    <div class="lives" id="dummy"></div>
+    <div class="button" id="mLeft"></div>
+    <div class="button" id="mRight"></div>
+    <div class="button" id="shootLaz"></div>
+    <audio src="lazer.mp3" id="lazerSE"></audio>
+    <audio src="explo.mp3" id="exploSE"></audio>
+    <div id="shootCheck">f</div>
+</body>

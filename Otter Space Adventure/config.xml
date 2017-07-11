@@ -1,0 +1,18 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.codepy.games.otterspace" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:gap="http://phonegap.com/ns/1.0">
+    <name>Otter Space Adventure</name>
+    <description>
+        Join NASO's finest otternauts!
+    </description>
+    <author email="bflippy.codepy@gmail.com" href="http://naso.ga/">
+        CodePy Media
+    </author>
+    <content src="index.html" />
+    <access origin="*" />
+    <platform name="android">
+		<icon qualifier="ldpi" src="icon-36-ldpi.png"/>
+		<icon qualifier="mdpi" src="icon-48-mdpi.png"/>
+		<icon qualifier="hdpi" src="icon-72-hdpi.png"/>
+		<icon qualifier="xhdpi" src="icon-96-xhdpi.png"/>
+	</platform>
+</widget>

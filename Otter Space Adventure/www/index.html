@@ -1,0 +1,28 @@
+<DOCTYPE HTML>
+    <head>
+        <style>
+            #background{
+                height: 100%;
+                width: 100%;
+                position: absolute;
+                top: 0px; bottom: 0px; left: 0px; right: 0px;
+            }
+            #otter{
+                position: absolute;
+                width: 50vw;
+                bottom: 10px;
+                left: 25vw;
+            }
+            #play{
+                position: absolute;
+                font-size: 5vw;
+                color: lightblue;
+                top: 0px;
+            }
+        </style>
+    </head>
+    <body>
+        <img id="background" src="milky-way.jpg"/>
+        <img id="otter" onClick="window.location.replace('play.html')" src="space-otter.png"/>
+        <p id="play">Tap the otter to Play!</p> 
+    </body>
