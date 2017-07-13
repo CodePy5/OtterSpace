@@ -1,0 +1,96 @@
+<DOCTYPE HTML>
+<head>
+    <script src="jquery-3.2.1.min.js"></script>
+    <style>
+        #background {
+            width: 100vw;
+            height: 100vh;
+            top: 0; right: 0; bottom: 0; left: 0;
+            overflow: hidden;
+            position: absolute;
+        }
+        #rocket {
+            width: 10vw;
+            bottom: 1vh; left: 45vw;
+            position: absolute;
+            z-index: 2;
+        }
+        .button{
+            position: absolute;
+            z-index: 5;
+            width: 25vw;
+            height: 100vh;
+            bottom: 0px;
+            opacity: .5;
+        }
+        #mLeft{
+            left: 0px;
+            background-color: blue;
+        }
+        #mRight{
+            right: 0px;
+            background-color: yellow;
+        }
+        #shootLaz{
+            left: 37.5vw;
+            background-color: red;
+        }
+        .lives{
+            position: absolute;
+            top:0%;
+            left: 0%;
+            width: 5vw;
+            opacity: 1;
+            z-index: 2;
+        }
+        .text{
+            position: absolute;
+            font-size: 10vw;
+            color: purple;
+            z-index: 10;
+            top: 30vh;
+        }
+        #right{
+            left: 75vw;
+        }
+        #shoot{
+            left: 37.5vw;
+        }
+        #return{
+            top: 0vh;
+        }
+        #back{
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            z-index: 15;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        function sleep(ms) {
+             return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        $(document).ready(function () {
+            $("#r2").css("left", $("#r1").position().left + $("#r1").width());
+            $("#r3").css("left", $("#r2").position().left + $("#r2").width());
+            $("#back").click(function () {
+                window.location.replace("index.html");
+            });
+        });
+    </script>
+    <img src="milky-way.jpg" id="background" />
+    <img src="rocketwotter.png" id="rocket" />
+    <img src="rocket.png" id="r1" class="lives"/>
+    <img src="rocket.png" id="r2" class="lives"/>
+    <img src="rocket.png" id="r3" class="lives"/>
+    <div class="button" id="mLeft"></div>
+    <div class="button" id="mRight"></div>
+    <div class="button" id="shootLaz"></div>
+    <p class="text">Left</p>
+    <p class="text" id="right">Right</p>
+    <p class="text" id="shoot">Shoot</p>
+    <p class="text" id="return">Tap anywhere to return</p>
+    <div id="back"></div>
+</body>
