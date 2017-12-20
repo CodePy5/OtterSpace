@@ -1,5 +1,6 @@
 <DOCTYPE HTML>
     <head>
+        <script src="jquery-3.2.1.min.js"></script>
         <style>
             #background{
                 height: 100%;
@@ -25,6 +26,15 @@
                 bottom: 10px;
                 left: 50vw;
             }
+            #score {
+                position: absolute;
+                background-color: red;
+                top: 0px;
+                right: 0%;
+                font-size: 5vw;
+                z-index: 2;
+                display: none;
+            }
         </style>
     </head>
     <body>
@@ -32,4 +42,14 @@
         <img id="otter" onClick="window.location.replace('play.html')" src="space-otter.png"/>
         <img id="help" onclick="window.location.replace('help.html')" src="Q.png"/>
         <p id="play">Tap the otter to Play!</p> 
+        <div id="score"></div>
+        <script>
+            $(document).ready(function () {
+                var strg = window.localStorage;
+                if (strg.getItem("high") != null) {
+                    $("#score").show();
+                    $("#score").html("High Score: " + strg.getItem("high"));
+                }
+            });
+        </script>
     </body>
