@@ -35,22 +35,12 @@
                 z-index: 2;
                 display: none;
             }
-            #skip {
-                position: absolute;
-                top: 50vh;
-                left: 10px;
-                display: none;
-                width: 10vh;
-                height: 10vh;
-                z-index: 2;
-            }
         </style>
     </head>
     <body>
         <img id="background" src="milky-way.jpg"/>
         <img id="otter" onClick="window.location.replace('play.html')" src="space-otter.png"/>
         <img id="help" onclick="window.location.replace('help.html')" src="Q.png"/>
-        <img id="skip" onclick="window.localStorage.setItem('mine', 'true'); window.location.replace('play.html');" src="skip.png"/>
         <p id="play">Tap the otter to Play!</p> 
         <div id="score"></div>
         <script>
@@ -59,9 +49,6 @@
                 if (strg.getItem("high") != null) {
                     $("#score").show();
                     $("#score").html("High Score: " + strg.getItem("high"));
-                    if (navigator.onLine) {
-                        $("#skip").show();
-                    }
                 }
             });
         </script>
